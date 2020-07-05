@@ -1,0 +1,1 @@
+-rw-r--r-- 1 root root 1039 Jul  5 13:06 /etc/hosts
