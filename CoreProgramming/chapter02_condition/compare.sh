@@ -95,6 +95,13 @@ Shell 支持大量对文件属性的判断，常用的文件属性操作符很�
 file1 -ef file2     两个文件使用相同设备、相同inode编号，则返回真，否则返回假
 file1 -nt file2     filel比file2更新时返回真；或者 filel在而file2不存在时返回真
 file1 -ot file2     filel比file2更旧时返回真；或者file2存在而 filel不存在时返回真
+
+ef equal file
+nt new than 更新
+ot old than 更旧
+
+测试权限需要注意root的特殊性，root在没有rw权限的情况下也可以读写文件，
+rw权限对超级管理员是无效的，但如果文件没有x权限，root也不可以执行该文件。   
 EOF
 
 touch ver1.txt
@@ -120,3 +127,27 @@ printf "判断是否为软链接：" && [ -L ~/hosts-soft-link ] && echo 是 || 
 printf "判断不是软链接：" && [ ! -L ~/hosts-soft-link ] && echo 是 || echo 否
 printf "判断是否为软链接：" && [ -L ~/hosts-hard-link ] && echo 是 || echo 否
 printf "判断两个文件是否使用相同的设备、inode编号：" && [ ~/hosts-hard-link -ef /etc/hosts ] && echo Y || echo N
+ls -l ver1.txt
+printf "是否对 ver1.txt 有可读权限" && [ -r ver1.txt ] && echo Y || echo N
+chmod u-r ver1.txt # 移除 r 权限
+printf "是否对 ver1.txt 有可读权限" && [ -r ver1.txt ] && echo Y || echo N
+printf "是否对 ver1.txt 没有可读权限" && [ ! -r ver1.txt ] && echo Y || echo N
+chmod -w ver1.txt # 移除 w 权限
+ls -l ver1.txt
+printf "是否对 ver1.txt 有可写权限" && [ -w ver1.txt ] && echo Y || echo N
+printf "是否对 ver1.txt 有可执行权限" && [ -x ver1.txt ] && echo Y || echo N
+chmod +x ver1.txt
+ls -l ver1.txt
+printf "是否对 ver1.txt 有可执行权限" && [ -x ver1.txt ] && echo Y || echo N
+
+# touch创建的文件都是空文件
+printf "检测ver1.txt是否为非空文件" && [ -s ver1.txt ] && echo Y || echo N
+echo "Hello" > ver1.txt
+printf "检测ver1.txt是否为非空文件" && [ -s ver1.txt ] && echo Y || echo N
+
+# 检测文件更新更旧
+ls -l ver*.txt
+printf "ver1.txt 是否比 ver2.txt 更新：" && [ ver1.txt -nt ver2.txt ] && echo Y || echo N
+printf "ver2.txt 是否比 ver1.txt 更新：" && [ ver2.txt -nt ver1.txt ] && echo Y || echo N
+printf "ver1.txt 是否比 ver2.txt 更旧：" && [ ver1.txt -ot ver2.txt ] && echo Y || echo N
+printf "ver2.txt 是否比 ver1.txt 更旧：" && [ ver2.txt -ot ver1.txt ] && echo Y || echo N
